@@ -8,5 +8,8 @@
   },
   "author": "Pedro Ferreira",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "zod": "^4.6.5"
+  }
 }
