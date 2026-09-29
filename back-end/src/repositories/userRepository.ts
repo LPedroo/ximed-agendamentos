@@ -1,0 +1,72 @@
+import { prisma } from "../lib/prisma.js"
+import type { Prisma } from "../../generated/prisma/client.js"
+
+const publicSelect = {
+    id: true,
+    name: true,
+    email: true,
+    telephone: true,
+    cpf: true,
+    role: true,
+    active: true,
+    createdAt: true,
+    updatedAt: true,
+} satisfies Prisma.UserSelect
+
+export const userRepository = {
+    create: (data: Prisma.UserCreateInput) =>
+        prisma.user.create({ data, select: publicSelect }),
+
+    async findPaginated({
+        includeInactive,
+        search,
+        skip,
+        take,
+    }: {
+        includeInactive: boolean
+        search?: string | undefined
+        skip: number
+        take: number
+    }) {
+        const where: Prisma.UserWhereInput = {
+            ...(!includeInactive && { active: true }),
+            ...(search && {
+                OR: [
+                    { name: { contains: search, mode: "insensitive" } },
+                    { email: { contains: search, mode: "insensitive" } },
+                    { cpf: { contains: search } },
+                ],
+            }),
+        }
+
+        const [data, total] = await prisma.$transaction([
+            prisma.user.findMany({
+                where,
+                select: publicSelect,
+                orderBy: { createdAt: "desc" },
+                skip,
+                take,
+            }),
+            prisma.user.count({ where }),
+        ])
+        return { data, total }
+    },
+
+    findAuthByEmail: (email: string) =>
+        prisma.user.findUnique({
+            where: { email },
+            select: { id: true, password: true, role: true, active: true },
+        }),
+
+    findById: (id: string) =>
+        prisma.user.findUnique({ where: { id }, select: publicSelect }),
+
+    findByEmailOrCpf: (email?: string, cpf?: string) =>
+        prisma.user.findFirst({
+            where: { OR: [...(email ? [{ email }] : []), ...(cpf ? [{ cpf }] : [])] },
+            select: { id: true },
+        }),
+
+    update: (id: string, data: Prisma.UserUpdateInput) =>
+        prisma.user.update({ where: { id }, data, select: publicSelect }),
+}
