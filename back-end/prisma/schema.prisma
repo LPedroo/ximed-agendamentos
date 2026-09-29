@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -10,4 +5,111 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  telephone String?
+  cpf       String   @unique
+  role      UserRole @default(PATIENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patient             Patient?
+  doctor              Doctor?
+  createdExaminations MedicalExamination[] @relation("ExamCreatedBy")
+  createdAppointments Appointment[]        @relation("AppointmentCreatedBy")
+}
+
+model Patient {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  examinations MedicalExamination[]
+  appointments Appointment[]
+}
+
+model Doctor {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  crm    String @unique
+
+  examinations MedicalExamination[]
+  appointments Appointment[]
+}
+
+model MedicalExamination {
+  id            String    @id @default(cuid())
+  name          String
+  patientId     String
+  patient       Patient   @relation(fields: [patientId], references: [id])
+  doctorId      String
+  doctor        Doctor    @relation(fields: [doctorId], references: [id])
+  datePerformed DateTime?
+  dateResult    DateTime?
+  status        String?
+  result        String?
+  report        String?
+  createdById   String?
+  createdBy     User?     @relation("ExamCreatedBy", fields: [createdById], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Appointment {
+  id                 String            @id @default(cuid())
+  patientId          String
+  patient            Patient           @relation(fields: [patientId], references: [id])
+  requestingDoctorId String
+  requestingDoctor   Doctor            @relation(fields: [requestingDoctorId], references: [id])
+  roomId             String?
+  room               Room?             @relation(fields: [roomId], references: [id])
+  examTypeId         String?
+  scheduledAt        DateTime
+  estimatedDuration  Int?
+  status             AppointmentStatus @default(SCHEDULED)
+  observations       String?
+  createdById        String?
+  createdBy          User?             @relation("AppointmentCreatedBy", fields: [createdById], references: [id])
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([scheduledAt])
+}
+
+model Room {
+  id       String   @id @default(cuid())
+  name     String
+  roomType RoomType
+  capacity Int
+  status   String?
+
+  appointments Appointment[]
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+  PATIENT
+  DOCTOR
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  CANCELLED
+  ATTENDED
+  NO_SHOW
+}
+
+enum RoomType {
+  CONSULTATION
+  PROCEDURE
+  SURGERY
+  LABORATORY
 }

@@ -1,0 +1,24 @@
+{
+  "name": "ximed-atendimento",
+  "version": "1.0.0",
+  "description": "Ainda vou escrever",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LPedroo/ximed-agendamentos.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LPedroo/ximed-agendamentos/issues"
+  },
+  "homepage": "https://github.com/LPedroo/ximed-agendamentos#readme",
+  "workspaces": [
+    "back-end",
+    "front-end",
+    "shared"
+  ]
+}
