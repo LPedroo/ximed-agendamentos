@@ -15,6 +15,7 @@ model User {
   telephone String?
   cpf       String   @unique
   role      UserRole @default(PATIENT)
+  active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -44,21 +45,26 @@ model Doctor {
 }
 
 model MedicalExamination {
-  id            String    @id @default(cuid())
-  name          String
+  id            String       @id @default(cuid())
+  examTypeId    String
+  examType      ExamType     @relation(fields: [examTypeId], references: [id])
   patientId     String
-  patient       Patient   @relation(fields: [patientId], references: [id])
+  patient       Patient      @relation(fields: [patientId], references: [id])
   doctorId      String
-  doctor        Doctor    @relation(fields: [doctorId], references: [id])
+  doctor        Doctor       @relation(fields: [doctorId], references: [id])
+  appointmentId String?
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
   datePerformed DateTime?
   dateResult    DateTime?
   status        String?
   result        String?
   report        String?
   createdById   String?
-  createdBy     User?     @relation("ExamCreatedBy", fields: [createdById], references: [id])
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdBy     User?        @relation("ExamCreatedBy", fields: [createdById], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([appointmentId])
 }
 
 model Appointment {
@@ -70,6 +76,7 @@ model Appointment {
   roomId             String?
   room               Room?             @relation(fields: [roomId], references: [id])
   examTypeId         String?
+  examType           ExamType?         @relation(fields: [examTypeId], references: [id])
   scheduledAt        DateTime
   estimatedDuration  Int?
   status             AppointmentStatus @default(SCHEDULED)
@@ -79,15 +86,30 @@ model Appointment {
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 
+  examinations MedicalExamination[]
+
   @@index([scheduledAt])
 }
 
+model ExamType {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  description String?
+  category    ExamCategory
+  active      Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  appointments Appointment[]
+  examinations MedicalExamination[]
+}
+
 model Room {
-  id       String   @id @default(cuid())
+  id       String     @id @default(cuid())
   name     String
   roomType RoomType
   capacity Int
-  status   String?
+  status   RoomStatus @default(AVAILABLE)
 
   appointments Appointment[]
 }
@@ -105,6 +127,17 @@ enum AppointmentStatus {
   CANCELLED
   ATTENDED
   NO_SHOW
+}
+
+enum ExamCategory {
+  OCCUPATIONAL
+  COMPLEMENTARY
+}
+
+enum RoomStatus {
+  AVAILABLE
+  MAINTENANCE
+  INACTIVE
 }
 
 enum RoomType {
