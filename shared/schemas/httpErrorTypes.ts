@@ -27,6 +27,7 @@ export const HttpErrorType = {
     PATIENT_NOT_FOUND: "PATIENT_NOT_FOUND",
     DOCTOR_NOT_FOUND: "DOCTOR_NOT_FOUND",
     DATABASE_UNREACHABLE: "DATABASE_UNREACHABLE",
+    TOO_MANY_REQUESTS: "TOO_MANY_REQUESTS",
 } as const
 
 export type HttpErrorType = (typeof HttpErrorType)[keyof typeof HttpErrorType]
@@ -60,4 +61,5 @@ export const HTTP_ERROR_MESSAGE: Record<HttpErrorType, string> = {
     PATIENT_NOT_FOUND: "Paciente não encontrado.",
     DOCTOR_NOT_FOUND: "Médico não encontrado.",
     DATABASE_UNREACHABLE: "Não foi possível conectar ao servidor. Tente novamente em alguns instantes.",
+    TOO_MANY_REQUESTS: "Muitas requisições. Aguarde um momento e tente novamente.",
 }
