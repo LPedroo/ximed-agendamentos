@@ -42,6 +42,7 @@ export type UserResponse = {
 }
 
 export const listUsersQuerySchema = z.object({
+    role: UserRoleSchema.optional(),
     includeInactive: z.enum(["true", "false"]).default("false").transform((v) => v === "true"),
     search: z.string().trim().min(1).optional(),
     page: z.coerce.number().int().min(1).default(1),

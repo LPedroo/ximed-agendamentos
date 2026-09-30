@@ -1,11 +1,14 @@
 import { Router } from "express"
 import { examTypeController } from "../controllers/examTypeController.js"
+import { requireRole } from "../middlewares/require-role.js"
 
 export const examTypeRoutes = Router()
 
-examTypeRoutes.post("/", examTypeController.create)
+const canWrite = requireRole("ADMIN", "OPERATOR")
+
+examTypeRoutes.post("/", canWrite, examTypeController.create)
 examTypeRoutes.get("/", examTypeController.list)
 examTypeRoutes.get("/:id", examTypeController.getById)
-examTypeRoutes.patch("/:id", examTypeController.update)
-examTypeRoutes.patch("/:id/disable", examTypeController.disable)
-examTypeRoutes.patch("/:id/enable", examTypeController.enable)
+examTypeRoutes.patch("/:id", canWrite, examTypeController.update)
+examTypeRoutes.patch("/:id/disable", canWrite, examTypeController.disable)
+examTypeRoutes.patch("/:id/enable", canWrite, examTypeController.enable)

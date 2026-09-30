@@ -1,5 +1,5 @@
 import { prisma } from "../lib/prisma.js"
-import type { Prisma } from "../../generated/prisma/client.js"
+import type { Prisma, UserRole } from "../../generated/prisma/client.js"
 
 const publicSelect = {
     id: true,
@@ -22,16 +22,19 @@ export const userRepository = {
     async findPaginated({
         includeInactive,
         search,
+        role,
         skip,
         take,
     }: {
         includeInactive: boolean
         search?: string | undefined
+        role?: UserRole | undefined
         skip: number
         take: number
     }) {
         const where: Prisma.UserWhereInput = {
             ...(!includeInactive && { active: true }),
+            ...(role && { role }),
             ...(search && {
                 OR: [
                     { name: { contains: search, mode: "insensitive" } },
@@ -58,6 +61,10 @@ export const userRepository = {
         prisma.user.findUnique({
             where: { email },
             select: { id: true, password: true, role: true, active: true },
+        }),
+
+    findSessionById: (id: string) =>
+        prisma.user.findUnique({ where: { id }, select: { id: true, role: true, active: true, patient: { select: { id: true } } },
         }),
 
     findById: (id: string) =>

@@ -71,10 +71,10 @@ const assertFuture = (date: Date) => {
 }
 
 export const appointmentService = {
-    async create(input: CreateAppointmentInput) {
+    async create(input: CreateAppointmentInput, createdById: string) {
         assertFuture(input.scheduledAt)
         await assertSlot(input)
-        return appointmentRepository.create(omitUndefined(input))
+        return appointmentRepository.create({ ...omitUndefined(input), createdById })
     },
 
     async list({ page, limit, ...filters }: ListAppointmentsQuery) {
@@ -86,9 +86,9 @@ export const appointmentService = {
         return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } }
     },
 
-    async getById(id: string) {
+    async getById(id: string, onlyPatientId?: string) {
         const appointment = await appointmentRepository.findById(id)
-        if (!appointment) throw error(404, HttpErrorType.APPOINTMENT_NOT_FOUND)
+        if (!appointment || (onlyPatientId !== undefined && appointment.patientId !== onlyPatientId)) throw error(404, HttpErrorType.APPOINTMENT_NOT_FOUND)
         return appointment
     },
 
@@ -105,6 +105,14 @@ export const appointmentService = {
         if (changesSlot && ["SCHEDULED", "CONFIRMED"].includes(next.status)) await assertSlot(next, id)
 
         return appointmentRepository.update(id, omitUndefined(input))
+    },
+
+    async delete(id: string) {
+        await this.getById(id)
+        if ((await appointmentRepository.countExaminations(id)) > 0) {
+            throw error(409, HttpErrorType.APPOINTMENT_HAS_EXAMINATIONS)
+        }
+        await appointmentRepository.delete(id)
     },
 
     async cancel(id: string) {

@@ -1,5 +1,6 @@
 import type { Request, Response } from "express"
 import { loginSchema } from "../../../shared/schemas/userSchema.js"
+import { userService } from "../services/userService.js"
 import { authService } from "../services/authService.js"
 
 const COOKIE_MAX_AGE_MS = 8 * 60 * 60 * 1000
@@ -16,6 +17,10 @@ export const authController = {
             maxAge: COOKIE_MAX_AGE_MS,
         })
         res.status(204).send()
+    },
+
+    async me(req: Request, res: Response) {
+        res.json(await userService.getById(req.user!.id))
     },
 
     logout(_req: Request, res: Response) {

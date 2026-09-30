@@ -1,10 +1,13 @@
 import { Router } from "express"
 import { roomController } from "../controllers/roomController.js"
+import { requireRole } from "../middlewares/require-role.js"
 
 export const roomRoutes = Router()
 
-roomRoutes.post("/", roomController.create)
+const canWrite = requireRole("ADMIN", "OPERATOR")
+
+roomRoutes.post("/", canWrite, roomController.create)
 roomRoutes.get("/", roomController.list)
 roomRoutes.get("/:id", roomController.getById)
-roomRoutes.patch("/:id", roomController.update)
-roomRoutes.delete("/:id", roomController.delete)
+roomRoutes.patch("/:id", canWrite, roomController.update)
+roomRoutes.delete("/:id", canWrite, roomController.delete)

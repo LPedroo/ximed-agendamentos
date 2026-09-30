@@ -3,6 +3,7 @@ export const HttpErrorType = {
     USER_NOT_FOUND: "USER_NOT_FOUND",
     USER_DISABLED: "USER_DISABLED",
     INVALID_CREDENTIALS: "INVALID_CREDENTIALS",
+    UNAUTHORIZED: "UNAUTHORIZED",
     FORBIDDEN: "FORBIDDEN",
     CRM_REQUIRED: "CRM_REQUIRED",
     CRM_EXISTS: "CRM_EXISTS",
@@ -27,6 +28,11 @@ export const HttpErrorType = {
     PATIENT_NOT_FOUND: "PATIENT_NOT_FOUND",
     DOCTOR_NOT_FOUND: "DOCTOR_NOT_FOUND",
     DATABASE_UNREACHABLE: "DATABASE_UNREACHABLE",
+    TOO_MANY_REQUESTS: "TOO_MANY_REQUESTS",
+    VALIDATION_ERROR: "VALIDATION_ERROR",
+    INVALID_JSON: "INVALID_JSON",
+    INTERNAL_ERROR: "INTERNAL_ERROR",
+    APPOINTMENT_HAS_EXAMINATIONS: "APPOINTMENT_HAS_EXAMINATIONS",
 } as const
 
 export type HttpErrorType = (typeof HttpErrorType)[keyof typeof HttpErrorType]
@@ -36,6 +42,7 @@ export const HTTP_ERROR_MESSAGE: Record<HttpErrorType, string> = {
     USER_NOT_FOUND: "Usuário não encontrado.",
     USER_DISABLED: "Este usuário está desativado.",
     INVALID_CREDENTIALS: "E-mail ou senha inválidos.",
+    UNAUTHORIZED: "Sessão inválida ou expirada. Faça login novamente.",
     FORBIDDEN: "Você não tem permissão para realizar esta ação.",
     CRM_REQUIRED: "Informe o CRM para usuários com role DOCTOR.",
     CRM_EXISTS: "Já existe um médico cadastrado com esse CRM.",
@@ -60,4 +67,9 @@ export const HTTP_ERROR_MESSAGE: Record<HttpErrorType, string> = {
     PATIENT_NOT_FOUND: "Paciente não encontrado.",
     DOCTOR_NOT_FOUND: "Médico não encontrado.",
     DATABASE_UNREACHABLE: "Não foi possível conectar ao servidor. Tente novamente em alguns instantes.",
+    TOO_MANY_REQUESTS: "Muitas requisições. Aguarde um momento e tente novamente.",
+    VALIDATION_ERROR: "Dados inválidos.",
+    INVALID_JSON: "O corpo da requisição não é um JSON válido.",
+    INTERNAL_ERROR: "Erro interno no servidor.",
+    APPOINTMENT_HAS_EXAMINATIONS: "Não é possível excluir um agendamento que possui exames vinculados.",
 }

@@ -69,10 +69,10 @@ const assertAppointment = async (
 }
 
 export const medicalExaminationService = {
-    async create(input: CreateMedicalExaminationInput) {
+    async create(input: CreateMedicalExaminationInput, createdById: string) {
         await assertExamType(input.examTypeId)
         await assertRelations(input.patientId, input.doctorId)
-        const data = omitUndefined(input)
+        const data = { ...omitUndefined(input), createdById }
         if (!input.appointmentId) return medicalExaminationRepository.create(data)
 
         await assertAppointment(input.appointmentId, input.patientId, input.doctorId, { checkStatus: true })
@@ -91,9 +91,9 @@ export const medicalExaminationService = {
         return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } }
     },
 
-    async getById(id: string) {
+    async getById(id: string, onlyPatientId?: string) {
         const exam = await medicalExaminationRepository.findById(id)
-        if (!exam) throw examNotFound()
+        if (!exam || (onlyPatientId !== undefined && exam.patientId !== onlyPatientId)) throw examNotFound()
         return exam
     },
 
