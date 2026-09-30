@@ -9,7 +9,7 @@ type StyleProps = { variant?: Variant; size?: Size; arrow?: boolean; fullWidth?:
 
 const VARIANT_CLASS: Record<Variant, { button: string; circle: string }> = {
     primary: { button: "bg-primary text-white hover:bg-primary-dark", circle: "bg-white text-primary" },
-    secondary: { button: "border border-border bg-white text-text hover:bg-surface", circle: "bg-primary text-white" },
+    secondary: { button: "border border-border-strong bg-white text-text hover:bg-surface", circle: "bg-primary text-white" },
     danger: { button: "border border-error/30 bg-white text-error hover:bg-error/5", circle: "bg-error text-white" },
 }
 

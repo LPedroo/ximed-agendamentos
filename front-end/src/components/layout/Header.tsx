@@ -11,11 +11,12 @@ import { Logo } from "@/components/ui/Logo"
 type Props = {
     items: { label: string; href: string }[]
     userName: string
+    userEmail: string
     roleLabel: string
 }
 
 // Pílula flutuante fixa; abaixo de 1200px vira hambúrguer e expande em coluna.
-export function Header({ items, userName, roleLabel }: Props) {
+export function Header({ items, userName, userEmail, roleLabel }: Props) {
     const pathname = usePathname()
     const [open, setOpen] = useState(false)
 
@@ -27,7 +28,7 @@ export function Header({ items, userName, roleLabel }: Props) {
     return (
         <header className="fixed inset-x-0 top-4 z-40 px-5">
             <div
-                className={`mx-auto max-w-[1200px] bg-[rgba(243,243,243,.92)] py-2 pr-2.5 pl-[22px] shadow-header backdrop-blur-[10px] ${open ? "rounded-[28px]" : "rounded-full"}`}
+                className={`mx-auto max-w-[1200px] border border-border-strong bg-[rgba(243,243,243,.92)] py-2 pr-2.5 pl-[22px] shadow-header backdrop-blur-[10px] ${open ? "rounded-[28px]" : "rounded-full"}`}
             >
                 <div className="flex items-center justify-between gap-4">
                     <Link href="/appointments" aria-label="Ximed — início" className="flex shrink-0 items-center">
@@ -45,6 +46,7 @@ export function Header({ items, userName, roleLabel }: Props) {
                     <div className="hidden items-center gap-4 xl:flex">
                         <div className="text-right text-[13px] leading-tight">
                             <p className="font-medium">{userName}</p>
+                            <p className="text-text-muted">{userEmail}</p>
                             <p className="text-text-muted">{roleLabel}</p>
                         </div>
                         <form action={logout}>
@@ -75,6 +77,7 @@ export function Header({ items, userName, roleLabel }: Props) {
                         <div className="flex items-center justify-between gap-3 border-t border-border-strong pt-4">
                             <div className="text-[13px] leading-tight">
                                 <p className="font-medium">{userName}</p>
+                                <p className="text-text-muted">{userEmail}</p>
                                 <p className="text-text-muted">{roleLabel}</p>
                             </div>
                             <form action={logout}>

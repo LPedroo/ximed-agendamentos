@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import { Eye, EyeOff } from "lucide-react"
 import { login } from "@/actions/auth"
 import { Button } from "@/components/ui/Button"
 import { ErrorMessage } from "@/components/ui/ErrorMessage"
@@ -8,6 +9,7 @@ import { Field, inputClass } from "@/components/ui/Field"
 
 export function LoginForm({ expired }: { expired: boolean }) {
     const [error, setError] = useState<string | null>(expired ? "Sua sessão expirou. Entre novamente." : null)
+    const [showPassword, setShowPassword] = useState(false)
     const [isPending, startTransition] = useTransition()
 
     const onSubmit = (formData: FormData) => {
@@ -29,7 +31,18 @@ export function LoginForm({ expired }: { expired: boolean }) {
             </Field>
 
             <Field label="Senha">
-                <input name="password" type="password" required autoComplete="current-password" className={inputClass} />
+                <div className="relative">
+                    <input name="password" type={showPassword ? "text" : "password"} required autoComplete="current-password" className={`${inputClass} pr-11`} />
+                    <button
+                        type="button"
+                        aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                        aria-pressed={showPassword}
+                        onClick={() => setShowPassword((value) => !value)}
+                        className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-text-muted hover:text-primary"
+                    >
+                        {showPassword ? <EyeOff className="size-5" strokeWidth={1.75} /> : <Eye className="size-5" strokeWidth={1.75} />}
+                    </button>
+                </div>
             </Field>
 
             {error && <ErrorMessage message={error} />}

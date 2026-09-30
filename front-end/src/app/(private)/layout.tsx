@@ -13,7 +13,7 @@ export default async function PrivateLayout({ children }: { children: React.Reac
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header items={items} userName={user.name} roleLabel={USER_ROLE_LABEL[user.role]} />
+      <Header items={items} userName={user.name} userEmail={user.email} roleLabel={USER_ROLE_LABEL[user.role]} />
       <main className="mx-auto w-full max-w-[1200px] flex-1 px-5 pt-28 pb-16">{children}</main>
       <Footer />
     </div>

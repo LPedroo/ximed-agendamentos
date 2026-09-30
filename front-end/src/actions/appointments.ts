@@ -10,7 +10,7 @@ import { apiFetch } from "@/lib/apiClient"
 import { listExamTypes } from "./exam-types"
 import { listRooms } from "./rooms"
 import { listUsers } from "./users"
-import type { AppointmentPayload } from "@/types/appointments"
+import type { AppointmentPayload, AppointmentReschedulePayload } from "@/types/appointments"
 import type { ActionResult } from "@/types/api"
 import type { ListParams } from "@/utils/query"
 
@@ -44,7 +44,7 @@ export async function createAppointment(payload: AppointmentPayload): Promise<Ac
     return result
 }
 
-export async function updateAppointment(id: string, payload: AppointmentPayload): Promise<ActionResult<AppointmentResponse>> {
+export async function updateAppointment(id: string, payload: AppointmentReschedulePayload): Promise<ActionResult<AppointmentResponse>> {
     const result = await apiFetch<AppointmentResponse>(ApiRoutes.appointments.update(id), { method: "PATCH", body: payload })
     if (result.ok) revalidatePath(PATH)
     return result
