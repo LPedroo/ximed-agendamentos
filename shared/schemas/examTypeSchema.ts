@@ -4,14 +4,14 @@ export const ExamCategorySchema = z.enum(["OCCUPATIONAL", "COMPLEMENTARY"])
 export type ExamCategory = z.infer<typeof ExamCategorySchema>
 
 export const createExamTypeSchema = z.object({
-    name: z.string().trim().min(2),
-    description: z.string().trim().min(1).optional(),
+    name: z.string().trim().min(2).max(100),
+    description: z.string().trim().min(1).max(500).optional(),
     category: ExamCategorySchema,
 })
 export type CreateExamTypeInput = z.infer<typeof createExamTypeSchema>
 
 export const updateExamTypeSchema = createExamTypeSchema
-    .extend({ description: z.string().trim().min(1).nullable().optional() })
+    .extend({ description: z.string().trim().min(1).max(500).nullable().optional() })
     .partial()
     .refine((data) => Object.keys(data).length > 0, {
         message: "Informe ao menos um campo para atualizar.",
@@ -32,7 +32,7 @@ export type ExamTypeResponse = {
 
 export const listExamTypesQuerySchema = z.object({
     includeInactive: z.enum(["true", "false"]).default("false").transform((v) => v === "true"),
-    search: z.string().trim().min(1).optional(),
+    search: z.string().trim().min(1).max(100).optional(),
     category: ExamCategorySchema.optional(),
     page: z.coerce.number().int().min(1).default(1),
     limit: z.coerce.number().int().min(1).max(100).default(10),

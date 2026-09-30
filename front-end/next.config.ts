@@ -1,14 +1,10 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
-// A API roda em outro host. Reescrevemos /api/* para ela, assim o navegador
-// só fala com o domínio do front: o cookie de sessão (httpOnly, SameSite=Strict)
-// funciona normalmente e não é preciso configurar CORS.
-const API_URL = process.env.API_URL ?? "http://localhost:3333";
-
 const nextConfig: NextConfig = {
-  async rewrites() {
-    return [{ source: "/api/:path*", destination: `${API_URL}/api/:path*` }];
-  },
+  // O front importa tipos e schemas de ../shared (monorepo), então a raiz do
+  // Turbopack precisa ser a raiz do repositório.
+  turbopack: { root: path.join(__dirname, "..") },
 };
 
 export default nextConfig;

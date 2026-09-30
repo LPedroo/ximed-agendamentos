@@ -4,13 +4,13 @@ export const UserRoleSchema = z.enum(["ADMIN", "OPERATOR", "PATIENT", "DOCTOR"])
 export type UserRole = z.infer<typeof UserRoleSchema>
 
 const userBaseSchema = z.object({
-    name: z.string().trim().min(2),
-    email: z.email().toLowerCase(),
-    password: z.string().min(8),
-    telephone: z.string().trim().min(8).optional(),
+    name: z.string().trim().min(2).max(120),
+    email: z.email().max(254).toLowerCase(),
+    password: z.string().min(8).max(72),
+    telephone: z.string().regex(/^\d{10,11}$/, "Telefone deve conter 10 ou 11 dígitos numéricos.").optional(),
     cpf: z.string().regex(/^\d{11}$/, "CPF deve conter 11 dígitos numéricos."),
     role: UserRoleSchema.optional(),
-    crm: z.string().trim().min(4).optional(),
+    crm: z.string().trim().min(4).max(20).optional(),
 })
 export const createUserSchema = userBaseSchema.refine(
     (data) => data.role !== "DOCTOR" || !!data.crm,
@@ -44,7 +44,7 @@ export type UserResponse = {
 export const listUsersQuerySchema = z.object({
     role: UserRoleSchema.optional(),
     includeInactive: z.enum(["true", "false"]).default("false").transform((v) => v === "true"),
-    search: z.string().trim().min(1).optional(),
+    search: z.string().trim().min(1).max(100).optional(),
     page: z.coerce.number().int().min(1).default(1),
     limit: z.coerce.number().int().min(1).max(100).default(10),
 })

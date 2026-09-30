@@ -38,6 +38,8 @@ Edite `back-end/.env`:
 | `PORT`         | Porta da API (padrão `3333`) |
 | `TRUST_PROXY`  | Opcional. Nº de proxies à frente da API (ex.: `1`). Necessário em produção atrás de proxy |
 | `SEED_PASSWORD`| Opcional. Senha dos usuários do seed (padrão `Ximed@123`) |
+| `RATE_LIMIT_MAX` | Opcional. Requisições por minuto por IP na API (padrão `100`) |
+| `LOGIN_RATE_LIMIT_MAX` | Opcional. Tentativas de login por IP a cada 15 min (padrão `10`) |
 
 ### 4. Criar as tabelas e popular o banco (seed)
 ```bash
@@ -61,7 +63,7 @@ cp front-end/.env.example front-end/.env
 npm run dev -w front-end    # Front em http://localhost:3000
 ```
 
-O front encaminha `/api/*` para a API (`API_URL` no `front-end/.env`), então tudo passa pelo mesmo domínio.
+O front chama a API pelo servidor do Next (Server Actions), usando `API_URL` do `front-end/.env` (ajuste se a sua API não estiver na porta 3333). O navegador só conversa com o front, e a sessão fica em um cookie httpOnly do próprio domínio do front.
 
 ## Usuários de demonstração
 

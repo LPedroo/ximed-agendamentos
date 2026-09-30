@@ -3,7 +3,7 @@ import { loginSchema } from "../../../shared/schemas/userSchema.js"
 import { userService } from "../services/userService.js"
 import { authService } from "../services/authService.js"
 
-const COOKIE_MAX_AGE_MS = 8 * 60 * 60 * 1000
+const COOKIE_MAX_AGE_MS = 4 * 60 * 60 * 1000 // igual à expiração do JWT (4h)
 
 export const authController = {
     async login(req: Request, res: Response) {
