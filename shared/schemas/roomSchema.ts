@@ -7,7 +7,7 @@ export const RoomStatusSchema = z.enum(["AVAILABLE", "MAINTENANCE", "INACTIVE"])
 export type RoomStatus = z.infer<typeof RoomStatusSchema>
 
 export const createRoomSchema = z.object({
-    name: z.string().trim().min(2),
+    name: z.string().trim().min(2).max(100),
     roomType: RoomTypeSchema,
     capacity: z.number().int().min(1),
     status: RoomStatusSchema.optional(),
@@ -32,7 +32,7 @@ export type RoomResponse = {
 }
 
 export const listRoomsQuerySchema = z.object({
-    search: z.string().trim().min(1).optional(),
+    search: z.string().trim().min(1).max(100).optional(),
     roomType: RoomTypeSchema.optional(),
     status: RoomStatusSchema.optional(),
     page: z.coerce.number().int().min(1).default(1),

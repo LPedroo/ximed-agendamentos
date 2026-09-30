@@ -13,7 +13,7 @@ export const createAppointmentSchema = z.object({
     examTypeId: z.string().min(1).optional(),
     scheduledAt: z.coerce.date(),
     estimatedDuration: z.number().int().min(1).max(480).optional(),
-    observations: z.string().trim().min(1).optional(),
+    observations: z.string().trim().min(1).max(1000).optional(),
 })
 export type CreateAppointmentInput = z.infer<typeof createAppointmentSchema>
 
@@ -22,7 +22,7 @@ export const updateAppointmentSchema = createAppointmentSchema
         roomId: z.string().min(1).nullable().optional(),
         examTypeId: z.string().min(1).nullable().optional(),
         estimatedDuration: z.number().int().min(1).max(480).nullable().optional(),
-        observations: z.string().trim().min(1).nullable().optional(),
+        observations: z.string().trim().min(1).max(1000).nullable().optional(),
         status: AppointmentStatusSchema.optional(),
     })
     .partial()

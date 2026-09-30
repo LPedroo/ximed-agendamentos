@@ -14,8 +14,14 @@ const createLimiter = (windowMs: number, limit: number): RequestHandler =>
         },
     })
 
-// Limite geral: todas as rotas da API, por IP.
-export const globalRateLimit = createLimiter(60 * 1000, 100)
+const envNumber = (name: string, fallback: number) => {
+    const value = Number(process.env[name])
+    return Number.isInteger(value) && value > 0 ? value : fallback
+}
+
+// Limite geral: todas as rotas da API, por IP (RATE_LIMIT_MAX requisições por minuto).
+export const globalRateLimit = createLimiter(60 * 1000, envNumber("RATE_LIMIT_MAX", 100))
 
 // Limite estrito: tentativas de login, por IP (mitiga brute force).
-export const loginRateLimit = createLimiter(15 * 60 * 1000, 10)
+// (LOGIN_RATE_LIMIT_MAX tentativas a cada 15 minutos.)
+export const loginRateLimit = createLimiter(15 * 60 * 1000, envNumber("LOGIN_RATE_LIMIT_MAX", 10))
