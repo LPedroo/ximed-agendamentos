@@ -28,7 +28,7 @@ export const authenticate: RequestHandler = async (req, _res, next) => {
             throw new HttpError(403, HTTP_ERROR_MESSAGE.USER_DISABLED, HttpErrorType.USER_DISABLED)
         }
 
-        req.user = { id: user.id, role: user.role }
+        req.user = { id: user.id, role: user.role, patientId: user.patient?.id ?? null }
         next()
     } catch (error) {
         next(error)

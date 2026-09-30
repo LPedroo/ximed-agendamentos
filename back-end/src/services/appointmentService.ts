@@ -86,9 +86,9 @@ export const appointmentService = {
         return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } }
     },
 
-    async getById(id: string) {
+    async getById(id: string, onlyPatientId?: string) {
         const appointment = await appointmentRepository.findById(id)
-        if (!appointment) throw error(404, HttpErrorType.APPOINTMENT_NOT_FOUND)
+        if (!appointment || (onlyPatientId !== undefined && appointment.patientId !== onlyPatientId)) throw error(404, HttpErrorType.APPOINTMENT_NOT_FOUND)
         return appointment
     },
 

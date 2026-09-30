@@ -61,7 +61,8 @@ export const userRepository = {
         }),
 
     findSessionById: (id: string) =>
-        prisma.user.findUnique({ where: { id }, select: { id: true, role: true, active: true } }),
+        prisma.user.findUnique({ where: { id }, select: { id: true, role: true, active: true, patient: { select: { id: true } } },
+        }),
 
     findById: (id: string) =>
         prisma.user.findUnique({ where: { id }, select: publicSelect }),

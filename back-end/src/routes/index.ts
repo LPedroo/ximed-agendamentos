@@ -5,6 +5,7 @@ import { examTypeRoutes } from "./examTypeRoutes.js"
 import { appointmentRoutes } from "./appointmentRoutes.js"
 import { roomRoutes } from "./roomRoutes.js"
 import { medicalExaminationRoutes } from "./medicalExaminationRoutes.js"
+import { authController } from "../controllers/authController.js"
 import { authenticate } from "../middlewares/authenticate.js"
 
 export const apiRoutes = Router()
@@ -14,6 +15,7 @@ apiRoutes.use("/auth", authRoutes)
 
 // Daqui pra baixo, tudo exige autenticação
 apiRoutes.use(authenticate)
+apiRoutes.get("/me", authController.me)
 apiRoutes.use("/users", userRoutes)
 apiRoutes.use("/medical-examinations", medicalExaminationRoutes)
 apiRoutes.use("/rooms", roomRoutes)

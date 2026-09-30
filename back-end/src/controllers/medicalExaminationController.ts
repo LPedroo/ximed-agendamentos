@@ -5,7 +5,13 @@ import {
     listMedicalExaminationsQuerySchema,
     medicalExaminationIdParamSchema,
 } from "../../../shared/schemas/medicalExaminationSchema.js"
+import { patientScope } from "../lib/patientScope.js"
 import { medicalExaminationService } from "../services/medicalExaminationService.js"
+
+const scopeFilter = (req: Request) => {
+    const patientId = patientScope(req)
+    return patientId === undefined ? {} : { patientId }
+}
 
 export const medicalExaminationController = {
     async create(req: Request, res: Response) {
@@ -15,12 +21,12 @@ export const medicalExaminationController = {
 
     async list(req: Request, res: Response) {
         const query = listMedicalExaminationsQuerySchema.parse(req.query)
-        res.json(await medicalExaminationService.list(query))
+        res.json(await medicalExaminationService.list({ ...query, ...scopeFilter(req) }))
     },
 
     async getById(req: Request, res: Response) {
         const { id } = medicalExaminationIdParamSchema.parse(req.params)
-        res.json(await medicalExaminationService.getById(id))
+        res.json(await medicalExaminationService.getById(id, patientScope(req)))
     },
 
     async update(req: Request, res: Response) {

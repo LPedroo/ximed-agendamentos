@@ -91,9 +91,9 @@ export const medicalExaminationService = {
         return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } }
     },
 
-    async getById(id: string) {
+    async getById(id: string, onlyPatientId?: string) {
         const exam = await medicalExaminationRepository.findById(id)
-        if (!exam) throw examNotFound()
+        if (!exam || (onlyPatientId !== undefined && exam.patientId !== onlyPatientId)) throw examNotFound()
         return exam
     },
 
