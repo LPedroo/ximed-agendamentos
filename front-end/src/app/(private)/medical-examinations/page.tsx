@@ -6,6 +6,7 @@ import { ErrorMessage } from "@/components/ui/ErrorMessage"
 import { FilterBar } from "@/components/ui/FilterBar"
 import { PageHeader } from "@/components/ui/PageHeader"
 import { Pagination } from "@/components/ui/Pagination"
+import { EXAM_STATUS_OPTIONS } from "@/constants/labels"
 import { EXAMINATION_WRITE_ROLES, hasRole } from "@/constants/permissions"
 import { getCurrentUser } from "@/lib/session"
 
@@ -40,7 +41,7 @@ export default async function MedicalExaminationsPage({ searchParams }: { search
             type: "select",
             options: examTypes.ok ? examTypes.data.data.map((examType) => ({ value: examType.id, label: examType.name })) : [],
           },
-          { name: "status", label: "Status", type: "text", placeholder: "Ex.: Finalizado" },
+          { name: "status", label: "Status", type: "select", options: EXAM_STATUS_OPTIONS.map((status) => ({ value: status, label: status })) },
         ]}
       />
       {result.ok ? (
