@@ -84,11 +84,11 @@ model Appointment {
 }
 
 model Room {
-  id       String   @id @default(cuid())
+  id       String     @id @default(cuid())
   name     String
   roomType RoomType
   capacity Int
-  status   String?
+  status   RoomStatus @default(AVAILABLE)
 
   appointments Appointment[]
 }
@@ -106,6 +106,12 @@ enum AppointmentStatus {
   CANCELLED
   ATTENDED
   NO_SHOW
+}
+
+enum RoomStatus {
+  AVAILABLE
+  MAINTENANCE
+  INACTIVE
 }
 
 enum RoomType {
