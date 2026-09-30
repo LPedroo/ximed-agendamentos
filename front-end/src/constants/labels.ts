@@ -35,3 +35,6 @@ export const EXAM_CATEGORY_LABEL: Record<ExamCategory, string> = {
     OCCUPATIONAL: "Ocupacional",
     COMPLEMENTARY: "Complementar",
 }
+
+// O status do exame é texto livre na API; estes são os valores padronizados.
+export const EXAM_STATUS_OPTIONS = ["Pendente", "Em andamento", "Realizado", "Finalizado"]

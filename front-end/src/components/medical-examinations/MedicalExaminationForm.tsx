@@ -1,12 +1,13 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useForm, useWatch } from "react-hook-form"
+import { Controller, useForm, useWatch } from "react-hook-form"
 import type { MedicalExaminationResponse } from "@shared/schemas/medicalExaminationSchema"
 import { createMedicalExamination, updateMedicalExamination, type ExaminationFormOptions } from "@/actions/medical-examinations"
 import { Button } from "@/components/ui/Button"
 import { ErrorMessage } from "@/components/ui/ErrorMessage"
 import { Field, inputClass, textareaClass } from "@/components/ui/Field"
+import { ExamStatusPicker } from "@/components/medical-examinations/ExamStatusPicker"
 import { APPOINTMENT_STATUS_LABEL } from "@/constants/labels"
 import type { MedicalExaminationPayload } from "@/types/medicalExaminations"
 import { applyApiErrors, formatCpf, formatDateTime, fromDateTimeLocalValue, REQUIRED_MESSAGE, toDateTimeLocalValue } from "@/utils"
@@ -24,8 +25,6 @@ type FormValues = {
 }
 
 type Props = { options: ExaminationFormOptions; examination?: MedicalExaminationResponse }
-
-const STATUS_SUGGESTIONS = ["Pendente", "Em andamento", "Realizado", "Finalizado"]
 
 // Criação: campos vazios são omitidos. Alteração: `null` limpa o campo.
 const buildPayload = (values: FormValues, isEdit: boolean): MedicalExaminationPayload => {
@@ -100,14 +99,13 @@ export function MedicalExaminationForm({ options, examination }: Props) {
                     </select>
                 </Field>
 
-                <Field label="Status" error={errors.status?.message}>
-                    <input list="exam-status-options" maxLength={50} className={inputClass} {...register("status")} />
-                    <datalist id="exam-status-options">
-                        {STATUS_SUGGESTIONS.map((status) => (
-                            <option key={status} value={status} />
-                        ))}
-                    </datalist>
-                </Field>
+                <div className="md:col-span-2">
+                    <Controller
+                        control={control}
+                        name="status"
+                        render={({ field }) => <ExamStatusPicker value={field.value} onChange={field.onChange} error={errors.status?.message} />}
+                    />
+                </div>
 
                 <Field label="Paciente *" error={errors.patientId?.message}>
                     <select className={inputClass} {...register("patientId", { required: REQUIRED_MESSAGE })}>
