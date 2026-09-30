@@ -40,10 +40,11 @@ export const userService = {
         })
     },
 
-    async list({ page, limit, search, includeInactive }: ListUsersQuery) {
+    async list({ page, limit, search, includeInactive, role }: ListUsersQuery) {
         const { data, total } = await userRepository.findPaginated({
             includeInactive,
             search,
+            role,
             skip: (page - 1) * limit,
             take: limit,
         })

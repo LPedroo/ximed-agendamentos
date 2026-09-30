@@ -65,20 +65,22 @@ O front encaminha `/api/*` para a API (`API_URL` no `front-end/.env`), então tu
 
 ## Usuários de demonstração
 
-Senha de todos: `Ximed@123` (ou o valor de `SEED_PASSWORD`).
+O seed cria 5 usuários por perfil. Senha de todos: `Ximed@123` (ou o valor de `SEED_PASSWORD`).
 
-| Perfil   | E-mail                | O que pode fazer |
-|----------|-----------------------|------------------|
-| ADMIN    | admin@ximed.com       | Tudo |
-| OPERATOR | operador@ximed.com    | Salas, tipos de exame e agendamentos (criar/editar/cancelar/excluir), registrar exames, listar usuários |
-| DOCTOR   | medico@ximed.com      | Registrar exames, listar usuários, consultar agendamentos e exames |
-| PATIENT  | paciente@ximed.com    | Consultar apenas os próprios agendamentos e exames |
+| Perfil   | E-mails                                        | O que pode fazer |
+|----------|------------------------------------------------|------------------|
+| ADMIN    | `admin@ximed.com`, `admin2@` … `admin5@`       | Tudo |
+| OPERATOR | `operador@ximed.com`, `operador2@` … `operador5@` | Salas, tipos de exame e agendamentos (criar/editar/cancelar/excluir), registrar exames, listar usuários |
+| DOCTOR   | `medico@ximed.com`, `medico2@` … `medico5@`    | Registrar exames, listar usuários, consultar agendamentos e exames |
+| PATIENT  | `paciente@ximed.com`, `paciente2@` … `paciente5@` | Consultar apenas os próprios agendamentos e exames |
+
+Todos os e-mails terminam em `@ximed.com`.
 
 ## Permissões por rota
 
 | Recurso              | Escrita               | Leitura |
 |----------------------|-----------------------|---------|
-| `/users`             | `POST`/`PATCH`/`disable`/`enable`: ADMIN | listar e `GET /:id`: ADMIN, OPERATOR, DOCTOR |
+| `/users`             | `POST`/`PATCH`/`disable`/`enable`: ADMIN | listar (filtros `search`, `role`, `includeInactive`) e `GET /:id`: ADMIN, OPERATOR, DOCTOR |
 | `/rooms`, `/exam-types` | ADMIN, OPERATOR    | qualquer usuário autenticado |
 | `/appointments`      | ADMIN, OPERATOR (criar, editar, cancelar, excluir) | autenticado (PATIENT vê só os seus) |
 | `/medical-examinations` | ADMIN, DOCTOR, OPERATOR | autenticado (PATIENT vê só os seus) |
