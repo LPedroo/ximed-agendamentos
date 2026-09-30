@@ -1,3 +1,4 @@
+import "./types/express.js"
 import "dotenv/config"
 import express from "express"
 import { apiRoutes } from "./routes/index.js"
