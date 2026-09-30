@@ -13,12 +13,10 @@ export const createMedicalExaminationSchema = z.object({
     status: z.string().trim().min(1).optional(),
     result: z.string().trim().min(1).optional(),
     report: z.string().trim().min(1).optional(),
-    createdById: z.string().min(1).optional(),
 })
 export type CreateMedicalExaminationInput = z.infer<typeof createMedicalExaminationSchema>
 
 export const updateMedicalExaminationSchema = createMedicalExaminationSchema
-    .omit({ createdById: true })
     .extend({
         appointmentId: z.string().min(1).nullable().optional(),
         datePerformed: z.coerce.date().nullable().optional(),

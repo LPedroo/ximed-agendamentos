@@ -10,7 +10,7 @@ import { medicalExaminationService } from "../services/medicalExaminationService
 export const medicalExaminationController = {
     async create(req: Request, res: Response) {
         const input = createMedicalExaminationSchema.parse(req.body)
-        res.status(201).json(await medicalExaminationService.create(input))
+        res.status(201).json(await medicalExaminationService.create(input, req.user!.id))
     },
 
     async list(req: Request, res: Response) {

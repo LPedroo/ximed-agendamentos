@@ -14,12 +14,10 @@ export const createAppointmentSchema = z.object({
     scheduledAt: z.coerce.date(),
     estimatedDuration: z.number().int().min(1).max(480).optional(),
     observations: z.string().trim().min(1).optional(),
-    createdById: z.string().min(1).optional(),
 })
 export type CreateAppointmentInput = z.infer<typeof createAppointmentSchema>
 
 export const updateAppointmentSchema = createAppointmentSchema
-    .omit({ createdById: true })
     .extend({
         roomId: z.string().min(1).nullable().optional(),
         examTypeId: z.string().min(1).nullable().optional(),

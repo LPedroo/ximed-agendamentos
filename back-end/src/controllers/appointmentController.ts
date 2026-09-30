@@ -10,7 +10,7 @@ import { appointmentService } from "../services/appointmentService.js"
 export const appointmentController = {
     async create(req: Request, res: Response) {
         const input = createAppointmentSchema.parse(req.body)
-        res.status(201).json(await appointmentService.create(input))
+        res.status(201).json(await appointmentService.create(input, req.user!.id))
     },
 
     async list(req: Request, res: Response) {

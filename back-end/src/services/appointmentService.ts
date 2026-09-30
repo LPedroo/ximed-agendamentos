@@ -71,10 +71,10 @@ const assertFuture = (date: Date) => {
 }
 
 export const appointmentService = {
-    async create(input: CreateAppointmentInput) {
+    async create(input: CreateAppointmentInput, createdById: string) {
         assertFuture(input.scheduledAt)
         await assertSlot(input)
-        return appointmentRepository.create(omitUndefined(input))
+        return appointmentRepository.create({ ...omitUndefined(input), createdById })
     },
 
     async list({ page, limit, ...filters }: ListAppointmentsQuery) {
