@@ -1,3 +1,5 @@
+import type { AppointmentStatus } from "@shared/schemas/appointmentSchema"
+
 // Corpo aceito pela API para criar agendamentos (campos vazios são omitidos).
 export type AppointmentPayload = {
     patientId: string
@@ -10,4 +12,4 @@ export type AppointmentPayload = {
 }
 
 // Reagendamento: só a data muda e o agendamento volta a ficar confirmado.
-export type AppointmentReschedulePayload = { scheduledAt: string; status: "CONFIRMED" }
+export type AppointmentReschedulePayload = { scheduledAt: string; status: AppointmentStatus }
