@@ -6,6 +6,8 @@ import type {
 import { HTTP_ERROR_MESSAGE, HttpErrorType } from "../../../shared/schemas/httpErrorTypes.js"
 import { HttpError } from "../middlewares/errors/HttpError.js"
 import { omitUndefined } from "../lib/omitUndefined.js"
+import { examTypeRepository } from "../repositories/examTypeRepository.js"
+import { profileRepository } from "../repositories/profileRepository.js"
 import { medicalExaminationRepository } from "../repositories/medicalExaminationRepository.js"
 
 const examNotFound = () =>
@@ -24,20 +26,60 @@ const selfExamination = () =>
         HttpErrorType.SELF_EXAMINATION_NOT_ALLOWED,
     )
 
+const assertExamType = async (examTypeId: string) => {
+    const examType = await examTypeRepository.findById(examTypeId)
+    if (!examType) {
+        throw new HttpError(404, HTTP_ERROR_MESSAGE.EXAM_TYPE_NOT_FOUND, HttpErrorType.EXAM_TYPE_NOT_FOUND)
+    }
+    if (!examType.active) {
+        throw new HttpError(409, HTTP_ERROR_MESSAGE.EXAM_TYPE_DISABLED, HttpErrorType.EXAM_TYPE_DISABLED)
+    }
+}
+
 const assertRelations = async (patientId: string, doctorId: string) => {
     const [patientUserId, doctorUserId] = await Promise.all([
-        medicalExaminationRepository.findPatientUserId(patientId),
-        medicalExaminationRepository.findDoctorUserId(doctorId),
+        profileRepository.findPatientUserId(patientId),
+        profileRepository.findDoctorUserId(doctorId),
     ])
     if (!patientUserId) throw patientNotFound()
     if (!doctorUserId) throw doctorNotFound()
     if (patientUserId === doctorUserId) throw selfExamination()
 }
 
+const assertAppointment = async (
+    appointmentId: string,
+    patientId: string,
+    doctorId: string,
+    { checkStatus }: { checkStatus: boolean },
+) => {
+    const appointment = await medicalExaminationRepository.findAppointment(appointmentId)
+    if (!appointment) {
+        throw new HttpError(404, HTTP_ERROR_MESSAGE.APPOINTMENT_NOT_FOUND, HttpErrorType.APPOINTMENT_NOT_FOUND)
+    }
+    if (appointment.patientId !== patientId || appointment.requestingDoctorId !== doctorId) {
+        throw new HttpError(400, HTTP_ERROR_MESSAGE.APPOINTMENT_MISMATCH, HttpErrorType.APPOINTMENT_MISMATCH)
+    }
+    if (checkStatus && appointment.status !== "CONFIRMED" && appointment.status !== "ATTENDED") {
+        throw new HttpError(
+            409,
+            HTTP_ERROR_MESSAGE.APPOINTMENT_NOT_ATTENDABLE,
+            HttpErrorType.APPOINTMENT_NOT_ATTENDABLE,
+        )
+    }
+}
+
 export const medicalExaminationService = {
     async create(input: CreateMedicalExaminationInput) {
+        await assertExamType(input.examTypeId)
         await assertRelations(input.patientId, input.doctorId)
-        return medicalExaminationRepository.create(omitUndefined(input))
+        const data = omitUndefined(input)
+        if (!input.appointmentId) return medicalExaminationRepository.create(data)
+
+        await assertAppointment(input.appointmentId, input.patientId, input.doctorId, { checkStatus: true })
+        return medicalExaminationRepository.createAttendingAppointment({
+            ...data,
+            appointmentId: input.appointmentId,
+        })
     },
 
     async list({ page, limit, ...filters }: ListMedicalExaminationsQuery) {
@@ -57,10 +99,21 @@ export const medicalExaminationService = {
 
     async update(id: string, input: UpdateMedicalExaminationInput) {
         const current = await this.getById(id)
-        if (input.patientId || input.doctorId) {
-            await assertRelations(input.patientId ?? current.patientId, input.doctorId ?? current.doctorId)
+        if (input.examTypeId) await assertExamType(input.examTypeId)
+
+        const patientId = input.patientId ?? current.patientId
+        const doctorId = input.doctorId ?? current.doctorId
+        if (input.patientId || input.doctorId) await assertRelations(patientId, doctorId)
+
+        const appointmentId = input.appointmentId === undefined ? current.appointmentId : input.appointmentId
+        if (appointmentId && (input.appointmentId || input.patientId || input.doctorId)) {
+            await assertAppointment(appointmentId, patientId, doctorId, { checkStatus: !!input.appointmentId })
         }
-        return medicalExaminationRepository.update(id, omitUndefined(input))
+
+        const data = omitUndefined(input)
+        return input.appointmentId
+            ? medicalExaminationRepository.updateAttendingAppointment(id, data, input.appointmentId)
+            : medicalExaminationRepository.update(id, data)
     },
 
     async delete(id: string) {
