@@ -18,7 +18,7 @@ export default async function EditAppointmentPage({ params }: { params: Promise<
 
   return (
     <>
-      <PageHeader title="Reagendar" subtitle="Altere a data e o horário. Ao salvar, o agendamento fica como confirmado." />
+      <PageHeader title="Reagendar" subtitle="Altere a data, o horário e o status do agendamento." />
       <AppointmentRescheduleForm appointment={appointment.data} />
     </>
   )

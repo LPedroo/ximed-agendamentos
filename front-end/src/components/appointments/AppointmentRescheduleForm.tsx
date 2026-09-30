@@ -1,17 +1,22 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-import type { AppointmentResponse } from "@shared/schemas/appointmentSchema"
+import { Controller, useForm } from "react-hook-form"
+import type { AppointmentResponse, AppointmentStatus } from "@shared/schemas/appointmentSchema"
 import { updateAppointment } from "@/actions/appointments"
 import { Button } from "@/components/ui/Button"
 import { ErrorMessage } from "@/components/ui/ErrorMessage"
 import { Field, inputClass } from "@/components/ui/Field"
+import { OptionPicker } from "@/components/ui/OptionPicker"
+import { APPOINTMENT_STATUS_LABEL } from "@/constants/labels"
 import { applyApiErrors, fromDateTimeLocalValue, REQUIRED_MESSAGE, toDateTimeLocalValue } from "@/utils"
 
-type FormValues = { scheduledAt: string }
+type FormValues = { scheduledAt: string; status: AppointmentStatus }
 
-// Edição restrita à data: salvar também confirma o agendamento.
+// Cancelar tem ação própria na listagem.
+const STATUS_OPTIONS = (["SCHEDULED", "CONFIRMED", "ATTENDED", "NO_SHOW"] as const).map((value) => ({ value, label: APPOINTMENT_STATUS_LABEL[value] }))
+
+// Edição de data e status. Um agendamento "Agendado" vem pré-selecionado como confirmado ao reagendar.
 export function AppointmentRescheduleForm({ appointment }: { appointment: AppointmentResponse }) {
     const router = useRouter()
 
@@ -19,11 +24,16 @@ export function AppointmentRescheduleForm({ appointment }: { appointment: Appoin
         register,
         handleSubmit,
         setError,
+        control,
         formState: { errors, isSubmitting },
-    } = useForm<FormValues>({ defaultValues: { scheduledAt: toDateTimeLocalValue(appointment.scheduledAt) } })
+    } = useForm<FormValues>({ defaultValues: {
+            scheduledAt: toDateTimeLocalValue(appointment.scheduledAt),
+            status: appointment.status === "SCHEDULED" ? "CONFIRMED" : appointment.status,
+        },
+    })
 
     const onSubmit = handleSubmit(async (values) => {
-        const result = await updateAppointment(appointment.id, { scheduledAt: fromDateTimeLocalValue(values.scheduledAt), status: "CONFIRMED" })
+        const result = await updateAppointment(appointment.id, { scheduledAt: fromDateTimeLocalValue(values.scheduledAt), status: values.status })
 
         if (!result.ok) return applyApiErrors(result, Object.keys(values), setError)
 
@@ -41,10 +51,18 @@ export function AppointmentRescheduleForm({ appointment }: { appointment: Appoin
                 <input type="datetime-local" className={inputClass} {...register("scheduledAt", { required: REQUIRED_MESSAGE })} />
             </Field>
 
+            <Controller
+                control={control}
+                name="status"
+                render={({ field }) => (
+                    <OptionPicker label="Status" options={STATUS_OPTIONS} value={field.value} onChange={field.onChange} error={errors.status?.message} />
+                )}
+            />
+
             {errors.root?.message && <ErrorMessage message={errors.root.message} />}
 
             <div className="flex flex-wrap gap-3">
-                <Button type="submit" arrow={false} disabled={isSubmitting}>{isSubmitting ? "Salvando..." : "Salvar e confirmar"}</Button>
+                <Button type="submit" arrow={false} disabled={isSubmitting}>{isSubmitting ? "Salvando..." : "Salvar alterações"}</Button>
                 <Button type="button" variant="secondary" arrow={false} onClick={() => router.push("/appointments")}>Voltar</Button>
             </div>
         </form>
