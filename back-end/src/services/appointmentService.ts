@@ -107,6 +107,14 @@ export const appointmentService = {
         return appointmentRepository.update(id, omitUndefined(input))
     },
 
+    async delete(id: string) {
+        await this.getById(id)
+        if ((await appointmentRepository.countExaminations(id)) > 0) {
+            throw error(409, HttpErrorType.APPOINTMENT_HAS_EXAMINATIONS)
+        }
+        await appointmentRepository.delete(id)
+    },
+
     async cancel(id: string) {
         const appointment = await this.getById(id)
         if (appointment.status === "CANCELLED") throw error(409, HttpErrorType.APPOINTMENT_CANCELLED)

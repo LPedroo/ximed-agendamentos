@@ -29,6 +29,10 @@ export const HttpErrorType = {
     DOCTOR_NOT_FOUND: "DOCTOR_NOT_FOUND",
     DATABASE_UNREACHABLE: "DATABASE_UNREACHABLE",
     TOO_MANY_REQUESTS: "TOO_MANY_REQUESTS",
+    VALIDATION_ERROR: "VALIDATION_ERROR",
+    INVALID_JSON: "INVALID_JSON",
+    INTERNAL_ERROR: "INTERNAL_ERROR",
+    APPOINTMENT_HAS_EXAMINATIONS: "APPOINTMENT_HAS_EXAMINATIONS",
 } as const
 
 export type HttpErrorType = (typeof HttpErrorType)[keyof typeof HttpErrorType]
@@ -64,4 +68,8 @@ export const HTTP_ERROR_MESSAGE: Record<HttpErrorType, string> = {
     DOCTOR_NOT_FOUND: "Médico não encontrado.",
     DATABASE_UNREACHABLE: "Não foi possível conectar ao servidor. Tente novamente em alguns instantes.",
     TOO_MANY_REQUESTS: "Muitas requisições. Aguarde um momento e tente novamente.",
+    VALIDATION_ERROR: "Dados inválidos.",
+    INVALID_JSON: "O corpo da requisição não é um JSON válido.",
+    INTERNAL_ERROR: "Erro interno no servidor.",
+    APPOINTMENT_HAS_EXAMINATIONS: "Não é possível excluir um agendamento que possui exames vinculados.",
 }

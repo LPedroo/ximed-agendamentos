@@ -2,8 +2,11 @@ import "dotenv/config"
 import express from "express"
 import { apiRoutes } from "./routes/index.js"
 import { errorHandlerMiddleware } from "./middlewares/errors/error-handler.js"
+import { z } from "zod"
 import cookieParser from "cookie-parser"
 import { globalRateLimit } from "./middlewares/rate-limit.js"
+
+z.config(z.locales.pt())
 
 const app = express()
 

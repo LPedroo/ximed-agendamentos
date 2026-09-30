@@ -79,6 +79,10 @@ export const appointmentRepository = {
             select: { scheduledAt: true, estimatedDuration: true, roomId: true, requestingDoctorId: true, patientId: true },
         }),
 
+    countExaminations: (appointmentId: string) => prisma.medicalExamination.count({ where: { appointmentId } }),
+
+    delete: (id: string) => prisma.appointment.delete({ where: { id } }),
+
     update: (id: string, data: Prisma.AppointmentUncheckedUpdateInput) =>
         prisma.appointment.update({ where: { id }, data, include: appointmentInclude }),
 }

@@ -35,6 +35,12 @@ export const appointmentController = {
         res.json(await appointmentService.update(id, input))
     },
 
+    async delete(req: Request, res: Response) {
+        const { id } = appointmentIdParamSchema.parse(req.params)
+        await appointmentService.delete(id)
+        res.status(204).send()
+    },
+
     async cancel(req: Request, res: Response) {
         const { id } = appointmentIdParamSchema.parse(req.params)
         res.json(await appointmentService.cancel(id))
