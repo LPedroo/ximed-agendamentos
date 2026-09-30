@@ -9,6 +9,8 @@ const publicSelect = {
     cpf: true,
     role: true,
     active: true,
+    patient: { select: { id: true } },
+    doctor: { select: { id: true, crm: true } },
     createdAt: true,
     updatedAt: true,
 } satisfies Prisma.UserSelect
@@ -66,6 +68,9 @@ export const userRepository = {
             where: { OR: [...(email ? [{ email }] : []), ...(cpf ? [{ cpf }] : [])] },
             select: { id: true },
         }),
+
+    findDoctorByCrm: (crm: string) =>
+        prisma.doctor.findUnique({ where: { crm }, select: { userId: true } }),
 
     update: (id: string, data: Prisma.UserUpdateInput) =>
         prisma.user.update({ where: { id }, data, select: publicSelect }),
