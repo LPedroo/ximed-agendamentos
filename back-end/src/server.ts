@@ -19,7 +19,8 @@ app.use(cookieParser())
 app.use("/api", apiRoutes)
 app.use(errorHandlerMiddleware);
 
-const requiredEnvs = ["DATABASE_URL", "JWT_SECRET", "PORT"] as const
+const isVercel = Boolean(process.env["VERCEL"])
+const requiredEnvs = (isVercel ? ["DATABASE_URL", "JWT_SECRET"] : ["DATABASE_URL", "JWT_SECRET", "PORT"]) as string[]
 const missingEnvs = requiredEnvs.filter((name) => !process.env[name])
 
 if (missingEnvs.length > 0) {
@@ -27,6 +28,10 @@ if (missingEnvs.length > 0) {
   process.exit(1)
 }
 
-const PORT = process.env.PORT
+// Na Vercel o app é exportado e roda como função serverless; o listen é só para dev/local.
+if (!isVercel) {
+  const PORT = process.env.PORT
+  app.listen(PORT, () => console.log(`API iniciado em http://localhost:${PORT}`))
+}
 
-app.listen(PORT, () => console.log(`API iniciado em http://localhost:${PORT}`))
+export default app
