@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="front-end/public/logo-ximed.webp" alt="Logo Ximed" width="220" />
+</p>
+
 # Ximed Atendimento — Agendamento de Exames
 
 Aplicação para controle e criação de agendamentos de exames de pacientes em clínicas.
@@ -5,6 +9,16 @@ Aplicação para controle e criação de agendamentos de exames de pacientes em 
 - **back-end/** — API REST (Node.js, Express 5, Prisma 7, PostgreSQL, JWT em cookie httpOnly)
 - **front-end/** — Next.js
 - **shared/** — schemas (zod) e tipos de erro compartilhados entre API e front
+
+## Stack utilizada
+
+| Camada | Tecnologias |
+|--------|-------------|
+| **Front-end** | Next.js 16 (App Router, Server Actions), React 19, TypeScript, Tailwind CSS 4, React Hook Form, Zod, Lucide React |
+| **Back-end** | Node.js, Express 5, TypeScript (tsx), Prisma 7 (adapter `pg`), JWT + bcryptjs, cookie-parser, express-rate-limit, Zod |
+| **Banco de dados** | PostgreSQL (Docker Compose localmente) |
+| **Compartilhado** | `shared/` — schemas Zod e tipos de erro, via npm workspaces |
+| **Deploy** | Vercel |
 
 ## Como iniciar o projeto
 
@@ -34,6 +48,7 @@ Edite `back-end/.env`:
 | Variável       | Descrição |
 |----------------|-----------|
 | `DATABASE_URL` | `postgresql://USER:PASSWORD@localhost:5432/DB?schema=public` (mesmos valores do passo 2) |
+| `DIRECT_URL`   | Opcional. Conexão direta (porta 5432) usada nas migrations quando `DATABASE_URL` aponta para um pooler (ex.: Supabase/Vercel). Se vazio, usa `DATABASE_URL` |
 | `JWT_SECRET`   | Qualquer string longa e aleatória |
 | `PORT`         | Porta da API (padrão `3333`) |
 | `TRUST_PROXY`  | Opcional. Nº de proxies à frente da API (ex.: `1`). Necessário em produção atrás de proxy |
